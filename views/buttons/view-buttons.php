@@ -61,4 +61,3 @@ $query = new WP_Query( array(
 
 
     <?  endwhile; endif; ?>
-
