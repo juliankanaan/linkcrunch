@@ -56,4 +56,42 @@ jQuery(document).ready( function() {
       })
 
    });
+   // email capture form ajax 
+ jQuery(document).ready( function() {
+
+   jQuery("#emailsubmit").click( function(e) {
+      e.preventDefault();
+
+      email   = jQuery("#email").val()
+      nonce   = jQuery("#emailform").attr("data-nonce")
+      user_id = jQuery("#userid").val()
+      country = jQuery("#emailform").attr("data-country")
+
+      jQuery.ajax({
+         type : "post",
+         dataType : "json",
+         url : myAjax.ajaxurl,
+         data : {action: "emailcatch", email : email, nonce: nonce, user_id : user_id, country : country},
+         success: function(response) {
+            if(response.type == "success") {
+
+              jQuery("#emailsubmit").css("background-color","rgb(103, 207, 154)")
+              jQuery("#message").html("Thanks!")
+
+
+            }
+            else {
+               jQuery("#message").html(response.message)
+            }
+         }
+      })
+
+   });
+
+
+
+
+
+
+});  
 });
