@@ -155,3 +155,86 @@ function love() {
 
 
   }
+
+  function emailcatch(){
+
+
+  $email = $_REQUEST['email'];
+  $userid = $_REQUEST['user_id'];
+  $nonce  = $_REQUEST['nonce'];
+  $timestamp = current_time('mysql');
+  $country = $_REQUEST['country'];
+  // bail if nonce not verified
+  	
+  
+
+  if (!is_email($email)) {
+  $result['type'] = "error";
+  $result['message'] = "This email is not correct.";
+ 
+  
+
+  } else {
+  
+  $email = sanitize_email($_REQUEST['email']);
+  
+  global $wpdb;
+        // check if record exists
+          $row = $wpdb->get_row("SELECT * FROM wp_emaillog WHERE email = '$email' AND userid = $userid");
+  
+  if (!$row) {
+  // Insert the post into the database
+  
+  $addquery = $wpdb->insert( 'wp_emaillog',
+
+  array(
+          'email'    => $email,
+          'userid'   => $userid,
+          'email_time'  => $timestamp,
+          'email_country' => $country
+
+
+
+      ),
+      array(
+          '%s',
+          '%s',
+          '%s',
+          '%s'
+
+      )
+  );
+  
+  } 
+  
+
+
+
+
+if(!$addquery)  {
+   $result['type'] = "error";
+   $result['message'] = "Whoops, something went wrong.";
+   $result['email'] = "$email";
+   // $result['userid'] = "$userid";
+   $result['email_country'] = "$country";
+	
+}
+else {
+   $result['type'] = "success";
+
+}
+if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+   $result = json_encode($result);
+   echo $result;
+}
+else {
+   header("Location: ".$_SERVER["HTTP_REFERER"]);
+}
+
+
+die();
+
+
+
+
+}
